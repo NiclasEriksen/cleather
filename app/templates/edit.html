@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Rediger profilen din</h1>
+{% include "flash.html" %}
+<div class="well">
+    <form class="form-horizontal" action="" method="post" name="edit">
+        {{ form.hidden_tag() }}
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="nickname">Ditt kallenavn:</label>
+            <div class="controls">
+                {{ form.nickname(maxlength=64, class="span4") }}
+                {% for error in form.errors.nickname %}
+                    <span class="help-inline">[{{ error }}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="lat">Breddegrad:</label>
+            <div class="controls">
+                {{ form.lat(class="span4") }}
+                {% for error in form.errors.lat %}
+                    <span class="help-inline">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="lon">Lengdegrad:</label>
+            <div class="controls">
+                {{ form.lon(class="span4") }}
+                {% for error in form.errors.lon %}
+                    <span class="help-inline">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <input class="btn btn-primary" type="submit" value="Lagre endringer">
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

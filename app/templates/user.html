@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "flash.html" %}
+<div class="well well-large" style="height: 140px;">
+    <div class="pull-right">
+        <img src="{{ user.avatar(128) }}" class="img-polaroid">
+    </div>
+    <h1>{{ user.nickname }}</h1>
+    {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+    {% if user.last_seen %}<p><em>Sist sett: {{ momentjs(user.last_seen).calendar() }}</em></p>{% endif %}
+    <p>
+        {% if user.id == g.user.id %}
+            <a href="{{ url_for('edit') }}">Rediger</a> |
+            <a href="{{ url_for('add_clothes') }}">Legg til plagg</a>
+        {% endif %}
+    </p>
+</div>
+{% if weather %}
+    {% if weather.is_raining() %}
+    REGN!
+    {% elif weather.is_snowing() %}
+    SNØØ!
+    {% endif %}
+    {% if weather.is_windy() %}
+    ... og VIND!
+    {% endif %}
+    <table class="table">
+        <tr>
+            <td>Status:</td>
+            <td>{{ weather.desc }}</td>
+        </tr>
+        <tr>
+            <td>Symbol:</td>
+            <td><img src="{{ url_for('static', filename=weather.symbol) }}"></td>
+        </tr>
+        <tr>
+            <td>Temperatur:</td>
+            <td>{{ weather.temperature }}</td>
+        </tr>
+        <tr>
+            <td>Nedbør:</td>
+            <td>{{ weather.precipitation }}</td>
+        </tr>
+        <tr>
+            <td>Vindstyrke og retning:</td>
+            <td>{{ weather.wind_spd }} -  {{ weather.wind_dir }}</td>
+        </tr>
+    </table>
+{% endif %}
+<div class="well">
+    <h3>Relevante plagg:</h3>
+    <table class="table table-hover">
+        <thead>
+            <td>Navn</td>
+            <td>Score</td>
+        </thead>
+        <tbody>
+            {% for c in weather.check_clothes(user.owned_clothes()) %}
+                <tr>
+                    <td>{{ c.type }}</td>
+                    <td><strong>{{ c.score }}</strong></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="well">
+    <h3>Mine plagg:</h3>
+    {% for c in user.owned_clothes() %}
+        {% include "clothing_item.html" %}
+    {% endfor %}
+</div>
+{% endblock %}

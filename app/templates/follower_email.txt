@@ -1,0 +1,9 @@
+Hei {{ user.nickname }},
+
+{{ follower.nickname }} har begynt å følge deg. Klikk på denne linken for å se {{ follower.nickname }}'s profil:
+
+{{ url_for('user', nickname=follower.nickname, _external=True) }}
+
+Med vennlig hilsen,
+
+Cleather-admin

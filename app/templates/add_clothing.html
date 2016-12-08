@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script>
+function outputUpdate(field, value) {
+    console.log(field, value);
+    document.getElementById(field).innerHTML=value;
+    /*document.querySelector('#min_temp').text = value;*/
+}
+</script>
+<h1>Legg til klær og utstyr</h1>
+{% include "flash.html" %}
+<div class="span12">
+    <div class="well span6">
+        <form class="form-horizontal" action="" method="post" name="add_clothing">
+            {{ form.hidden_tag() }}
+            <div class="control-group{% if form.errors.type %} error{% endif %}">
+                <label class="control-label" for="type">Navn:</label>
+                <div class="controls">
+                    {{ form.type(maxlength=64, class="span4") }}
+                    {% for error in form.errors.type %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group{% if form.errors.slot %} error{% endif %}">
+                <label class="control-label" for="slot">Type:</label>
+                <div class="controls">
+                    {{ form.slot(class="span4") }}
+                    {% for error in form.errors.slot %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group{% if form.errors.desc %} error{% endif %}">
+                <label class="control-label" for="desc">Beskrivelse:</label>
+                <div class="controls">
+                    {{ form.desc(rows=4, class="span4") }}
+                    {% for error in form.errors.desc %}
+                        <span class="help-inline">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group{% if form.errors.min_temp %} error{% endif %}">
+                <label class="control-label" for="min_temp">Minste temperatur:</label>
+                <div class="controls">
+                    {{ form.min_temp(min=-30, max=50, oninput="outputUpdate('min_temp_val', value)") }}
+                    <span id="min_temp_val">{{ form.min_temp.data }}</span>
+                    {% for error in form.errors.min_temp %}
+                        <span class="help-inline">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group{% if form.errors.max_temp %} error{% endif %}">
+                <label class="control-label" for="max_temp">Høyeste temperatur:</label>
+                <div class="controls">
+                    {{ form.max_temp(min=-30, max=50, oninput="outputUpdate('max_temp_val', value)") }}
+                    <span id="max_temp_val">{{ form.max_temp.data }}</span>
+                    {% for error in form.errors.max_temp %}
+                        <span class="help-inline">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <hr>
+            <div class="control-group">
+                <label class="control-label" for="rain">Egnet for regn:</label>
+                <div class="controls">
+                    {{ form.rain(class="span4") }}
+                    {% for error in form.errors.rain %}
+                        <span class="help-inline">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="rain_strict">Viktig:</label>
+                <div class="controls">
+                    {{ form.rain_strict(class="span4") }}
+                    {% for error in form.errors.rain_strict %}
+                        <span class="help-inline">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <hr>
+            <div class="control-group">
+                <label class="control-label" for="snø">Egnet for snø:</label>
+                <div class="controls">
+                    {{ form.snow(class="span4") }}
+                    {% for error in form.errors.snow %}
+                        <span class="help-inline">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="snow_strict">Viktig:</label>
+                <div class="controls">
+                    {{ form.snow_strict(class="span4") }}
+                    {% for error in form.errors.snow_strict %}
+                        <span class="help-inline">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <hr>
+            <div class="control-group">
+                <label class="control-label" for="wind">Egnet for vind:</label>
+                <div class="controls">
+                    {{ form.wind(class="span4") }}
+                    {% for error in form.errors.wind %}
+                        <span class="help-inline">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="wind_strict">Viktig:</label>
+                <div class="controls">
+                    {{ form.wind_strict(class="span4") }}
+                    {% for error in form.errors.wind_strict %}
+                        <span class="help-inline">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <hr>
+            <div class="control-group">
+                <div class="controls">
+                    <input class="btn btn-primary" type="submit" value="Lagre plagg">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="well span4">
+    {% for c in g.user.owned_clothes() %}
+        {% include "clothing_item.html" %}
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+<p>Hei {{ user.nickname }},</p>
+<p><a href="{{ url_for('user', nickname=follower.nickname, _external=True) }}">{{ follower.nickname }}</a> har begynt å følge deg.</p>
+<table>
+    <tr valign="top">
+        <td><img src="{{ follower.avatar(50) }}"></td>
+        <td>
+            <a href="{{ url_for('user', nickname=follower.nickname, _external=True) }}">{{ follower.nickname }}</a><br />
+            {{ follower.about_me }}
+        </td>
+    </tr>
+</table>
+<p>Med vennlig hilsen,</p>
+<p><code>Cleather</code> administrator</p>

@@ -1,0 +1,11 @@
+<table class="table table-hover">
+    <tr>
+        <td width="70px"><img src="{{ c.icon(70) }}" /></td>
+        <td width="50%">
+            <p><strong><a href="{{ url_for('add_clothes', item=c.id) }}">{{ c.type }}</a></strong>{% if c.slot or c.slot == 0 %} &#187; <em>{{ config["SLOTS"][c.slot] }}</em>{% endif %}</p>
+            <p>{{ c.description }}</p>
+        </td>
+        <td>
+        </td>
+    </tr>
+</table>

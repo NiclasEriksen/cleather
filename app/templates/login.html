@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+    {% include "flash.html" %}
+    <div class="well">
+        <h3>Vennligst logg inn</h3>
+        <br><a href="{{ auth_url }}"><img src="static/img/btn_google_signin_light_normal_web.png" \></a>
+    </div>
+{% endblock %}
