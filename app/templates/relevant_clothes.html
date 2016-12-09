@@ -1,0 +1,34 @@
+<div class="well">
+    <h3>Relevante plagg:</h3>
+    <table class="table table-striped table-condensed">
+        <thead>
+            <td>Type plagg:</td>
+            <td></td>
+        </thead>
+        <tbody>
+            {% for s, clist in relevant.items() %}
+                <tr>
+                    <td><em>{{ config["SLOTS"][s] }}</em></td>
+                    <td>
+                        {% if clist %}
+                            <table class="table table-hover table-sm">
+                                {% set opacity = 1.0 %}
+                                {% for c in clist %}
+                                    <tr style="opacity: {{ opacity }};">
+                                        <td width="80%"><a href="{{ url_for('add_clothes', item=c.id) }}">{{ c.type }}</a></td>
+                                        <td width="20%"><p class="text-right"><strong>{{ c.score }}</strong></p></td>
+                                    </tr>
+                                    {% set opacity = opacity / 2 %}
+                                {% endfor %}
+                            </table>
+                        {% else %}
+                            <div class="alert alert-warning">
+                                <strong>Advarsel!</strong> Ingen passende plagg for "{{ config["SLOTS"][s] }}".
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

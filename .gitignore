@@ -1,0 +1,7 @@
+__pycache__/
+*.db
+*.crt
+*.csr
+*.key
+db_repository/
+tmp/

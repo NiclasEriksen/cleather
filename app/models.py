@@ -2,6 +2,7 @@ import sys
 import re
 import datetime
 from app import db, app
+from config import SLOTS
 # from hashlib import md5
 
 # if sys.version_info >= (3, 0):
@@ -71,6 +72,17 @@ class User(db.Model):
 
     def owned_clothes(self):
         return Wearable.query.filter_by(user_id=self.id).all()
+
+    def slot_clothes(self, clothes):
+        inventory = {s: None for s in SLOTS}
+        for c in clothes:
+            if not inventory[c.slot]:
+                inventory[c.slot] = [c]
+            else:
+                inventory[c.slot].append(c)
+
+        return inventory
+
 
     def __repr__(self):
         return "<User {0}>".format(self.nickname)

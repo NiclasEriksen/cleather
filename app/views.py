@@ -79,10 +79,15 @@ def user(nickname, page=1):
     except:
         flash("Fikk ikke hentet værdata fra Yr.no :(")
         w = None
+    if w:
+        rc = user.slot_clothes(w.check_clothes(user.owned_clothes()))
+    else:
+        rc = None
     return render_template(
         "user.html",
         user=user,
-        weather=w
+        weather=w,
+        relevant=rc
     )
 
 
