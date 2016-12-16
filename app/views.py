@@ -50,9 +50,9 @@ def before_request():
 
 
 @app.route("/bruker/<nickname>")
-#@app.route("/bruker/<nickname>/<int:page>")
+@app.route("/bruker/<nickname>/<int:period>")
 @login_required
-def user(nickname, page=1):
+def user(nickname, period=1):
     # This was just a db patch...
     # wa = Wearable.query.all()
     # for c in wa:
@@ -70,24 +70,66 @@ def user(nickname, page=1):
     #         # print(c.climate_profiency)
     #         db.session.add(c)
     #         db.session.commit()
-    user = User.query.filter_by(nickname=nickname).first()
-    if user == None:
+    user_object = User.query.filter_by(nickname=nickname).first()
+    if user_object is None:
         flash("Brukeren med navn {} ikke funnet.".format(nickname))
         return redirect(url_for("index"))
     try:
-        w = yr.now(user)
+        forecast_objects = yr.forecast(user_object)
     except:
-        flash("Fikk ikke hentet værdata fra Yr.no :(")
-        w = None
-    if w:
-        rc = user.slot_clothes(w.check_clothes(user.owned_clothes()))
+        flash("Fikk ikke hentet værdata fra Yr.no")
+        forecast_objects = None
+
+    if forecast_objects:
+        for f in forecast_objects:
+            if f.period == period:
+                weather_object = f
+                weather_object.current = True
+                break
+            else:
+                f.current = False
+        else:
+            flash("Periode ikke funnet i værmelding, bruker nåværende periode istedet.")
+            weather_object = forecast_objects[0]
+            weather_object.current = True
+            period = weather_object.period
     else:
-        rc = None
+        weather_object = None
+
+    if weather_object:
+        relevant_object = user_object.slot_clothes(
+            weather_object.check_clothes(user_object.owned_clothes())
+        )
+    else:
+        relevant_object = None
+
     return render_template(
         "user.html",
-        user=user,
-        weather=w,
-        relevant=rc
+        user=user_object,
+        period=period,
+        forecast=forecast_objects,
+        relevant=relevant_object
+    )
+
+
+@app.route("/forecast/<int:period>")
+@app.route("/forecast")
+def forecast(period=None):
+    try:
+        forecast_objects = yr.forecast(g.user)
+    except Exception as e:
+        flash("Fikk ikke hentet værdata fra Yr.no")
+        if str(e):
+            flash(str(e))
+        forecast_objects = None
+    if period is not None and forecast_objects is not None:
+        forecast_objects = [
+            f for f in forecast_objects if f.period == period
+        ]
+    return render_template(
+        "forecast_only.html",
+        user=g.user,
+        forecast=forecast_objects
     )
 
 
@@ -187,6 +229,7 @@ def add_clothes(item=None):
             c = Wearable()
         c.type = form.type.data
         c.description = form.desc.data
+        c.icon_file = form.icon.data
         c.owner = g.user
         c.climate_profiency = base_climate_profiency
         c.climate_profiency["rain"]         =   form.rain.data
@@ -222,4 +265,5 @@ def add_clothes(item=None):
         form.min_temp.data = c.climate_profiency["min_temp"]
         form.max_temp.data = c.climate_profiency["max_temp"]
         form.slot.data = c.slot
+        form.icon.data = c.icon_file
     return render_template("add_clothing.html", form=form)

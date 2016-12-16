@@ -1,5 +1,9 @@
 from yr.libyr import Yr, YrException
-from config import WINDY_TRESHOLD, SNOW_TRESHOLD, SLOTS
+from datetime import datetime
+try:
+    from config import WINDY_TRESHOLD, SNOW_TRESHOLD, SLOTS
+except ImportError:
+    print("Config not found, running directly?")
 
 
 class WeatherHandler:
@@ -16,12 +20,31 @@ class WeatherHandler:
         # weather = Yr(location_xyz=(lon, lat, msl), language_name="nb")
         try:
             weather = Yr(location_name="Norway/Rogaland/Stavanger/Gausel", language_name="nb")
+            if json:
+                return weather.now()
             # static/img/sym/b48/{0}.png
             # return weather.now()
-            return WeatherObject(weather.now())
-        except:
+            return WeatherObject(weather.now(as_json=json))
+        except Exception as e:
             print("Unable to fetch weather from Yr.no")
-            raise Exception
+            raise e
+
+    def forecast(self, user, json=False):
+        try:
+            weather = Yr(
+                location_name="Norway/Rogaland/Stavanger/Gausel",
+                language_name="nb",
+            )
+            if json:
+                return weather.forecast(as_json=json)
+            # static/img/sym/b48/{0}.png
+            # return weather.now()
+            # for f in weather.forecast():
+            #     print(f["@from"])
+            return [WeatherObject(f) for f in weather.forecast()]
+        except Exception as e:
+            print("Unable to fetch weather from Yr.no")
+            raise e
 
 
 class WeatherObject:
@@ -31,6 +54,19 @@ class WeatherObject:
         self.symbol = "img/sym/b48/{0}.png".format(
             resp["symbol"]["@var"]
         )
+        self.current = False
+        try:
+            self.period = int(resp["@period"])
+        except KeyError:
+            self.period = 1
+        try:
+            #2016-12-21T13:00:00
+            self.time_from = datetime.strptime(resp["@from"], "%Y-%m-%dT%H:%M:%S")
+            self.time_to = datetime.strptime(resp["@to"], "%Y-%m-%dT%H:%M:%S")
+            if datetime.now() > self.time_from and datetime.now() < self.time_to:
+                self.current = True
+        except KeyError:
+            self.time_from, self.time_to = None, None
         self.precipitation = float(resp["precipitation"]["@value"])
         self.wind_dir = resp["windDirection"]["@name"]
         self.wind_spd = resp["windSpeed"]["@name"]
@@ -117,4 +153,11 @@ class WeatherObject:
 
 if __name__ == "__main__":
     w = WeatherHandler()
-    print(w.now(None))
+    print(w.now(None, json=True))
+    fc = w.forecast(None, json=True)
+    fc_json = ""
+    for f in fc:
+        fc_json += f
+    print(fc_json)
+    print(len(fc))
+

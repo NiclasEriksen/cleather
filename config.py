@@ -18,7 +18,7 @@ SLOTS = {
     8: "sko",
     9: "utstyr"
 }
-
+ICON_FOLDER = os.path.join(basedir, "app/static/img/clothes/")
 
 # SSL
 SSL_CERT = os.path.join(basedir, "ssl.crt")

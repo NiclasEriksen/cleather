@@ -2,50 +2,29 @@
 
 {% block content %}
 {% include "flash.html" %}
-<div class="well well-large" style="height: 140px;">
-    <div class="pull-right">
+<div class="card" style="height: 140px;">
+    <div class="float-xs-right">
         <img src="{{ user.avatar(128) }}" class="img-polaroid">
     </div>
-    <h1>{{ user.nickname }}</h1>
-    {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+    <h1 class="card-title">{{ user.nickname }}</h1>
+    {% if user.about_me %}<p class="card-text">{{ user.about_me }}</p>{% endif %}
     {% if user.last_seen %}<p><em>Sist sett: {{ momentjs(user.last_seen).calendar() }}</em></p>{% endif %}
     <p>
         {% if user.id == g.user.id %}
-            <a href="{{ url_for('edit') }}">Rediger</a> |
-            <a href="{{ url_for('add_clothes') }}">Legg til plagg</a>
+            <a href="{{ url_for('edit') }}" class="btn btn-primary">Rediger</a>
+            <a href="{{ url_for('add_clothes') }}" class="btn btn-primary">Legg til plagg</a>
         {% endif %}
     </p>
 </div>
-{% if weather %}
-<div class="well well-small">
-    <table class="table">
-        <tr>
-            <td>Status:</td>
-            <td>{{ weather.desc }}</td>
-        </tr>
-        <tr>
-            <td>Symbol:</td>
-            <td><img src="{{ url_for('static', filename=weather.symbol) }}"></td>
-        </tr>
-        <tr>
-            <td>Temperatur:</td>
-            <td>{{ weather.temperature }}</td>
-        </tr>
-        <tr>
-            <td>Nedbør:</td>
-            <td>{{ weather.precipitation }}</td>
-        </tr>
-        <tr>
-            <td>Vindstyrke og retning:</td>
-            <td>{{ weather.wind_spd }} -  {{ weather.wind_dir }}</td>
-        </tr>
-    </table>
-</div>
+{% if forecast %}
+    {% include "forecast.html" %}
 {% endif %}
 {% if relevant %}
-    {% include "relevant_clothes.html" %}
+    <div class="col-md-12">
+        {% include "relevant_clothes.html" %}
+    </div>
 {% endif %}
-<div class="well">
+<div class="col-md-12">
     <h3>Mine plagg:</h3>
     {% for c in user.owned_clothes() %}
         {% include "clothing_item.html" %}

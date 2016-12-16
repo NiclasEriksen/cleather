@@ -1,8 +1,9 @@
 import sys
+import os
 import re
 import datetime
 from app import db, app
-from config import SLOTS
+from config import SLOTS, ICON_FOLDER
 # from hashlib import md5
 
 # if sys.version_info >= (3, 0):
@@ -93,11 +94,21 @@ class Wearable(db.Model):
     type = db.Column(db.String(64))
     description = db.Column(db.String(255))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    icon_file = db.Column(db.String(64))
     climate_profiency = db.Column(db.PickleType)
     slot = db.Column(db.Integer)    # Se config.py
 
     def icon(self, size):
-        return ""
+        if self.icon_file:
+            return "img/clothes/{0}".format(self.icon_file)
+        else:
+            return "img/clothes/no_icon.png"
+
+    @staticmethod
+    def get_icon_list():
+        return [
+            fn for fn in os.listdir(ICON_FOLDER) if fn.endswith(".png")
+        ]
 
     def __repr__(self):
         return "<UserID[{0}]'s wearable {1} - {2}>".format(

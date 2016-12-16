@@ -1,0 +1,52 @@
+{% if forecast %}
+<div class="table-responsive col-md-12">
+    <table class="table table-striped-column table-bordered">
+        <thead class="thead-inverse">
+            <tr>
+                <th>Tidsrom</th>
+                {% for f in forecast %}
+                    <th{% if f.current %} class="bg-info text-xs-center"><strong>Nå</strong></th>{% else %}>
+                        <small>{{ momentjs(f.time_from).format('dddd') }}</small><br>
+                        <small>{{ momentjs(f.time_from).format('LT') }} <b>></b> {{ momentjs(f.time_to).format('LT') }}</small>
+                    </th>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">Status</th>
+                {% for f in forecast %}
+                    <td{% if f.current %} class="bg-info" style="color: #FFF;"{% endif %}>{{ f.desc }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th scope="row">Symbol</th>
+                {% for f in forecast %}
+                    <td{% if f.current %} class="bg-info" style="color: #FFF;"{% endif %}><img src="{{ url_for('static', filename=f.symbol) }}"></td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th scope="row">Temperatur</th>
+                {% for f in forecast %}
+                    <td class="text-xs-center{% if f.current %} bg-info{% endif %}"{% if f.current %}  style='color: #FFF;'{% endif %}>{{ f.temperature }}&#8451;</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th scope="row">Nedbør</th>
+                {% for f in forecast %}
+                    <td class="text-xs-center{% if f.current %} bg-info{% endif %}"{% if f.current %}  style='color: #FFF;'{% endif %}>{{ f.precipitation }} mm</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th scope="row">Vind</th>
+                {% for f in forecast %}
+                    <td{% if f.current %} class="bg-info" style="color: #FFF;"{% endif %}><small>{{ f.wind_spd }}<br><em>{{ f.wind_dir }}</em></small></td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% else %}
+<span class="error"><h3>Ingenting å vise!</h3></span>
+{% endif %}

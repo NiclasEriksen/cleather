@@ -3,7 +3,7 @@ from wtforms import StringField, BooleanField, TextAreaField, DecimalField
 from wtforms import SelectField
 from wtforms.validators import DataRequired, Length
 from wtforms.fields.html5 import IntegerRangeField
-from app.models import User
+from app.models import User, Wearable
 from config import SLOTS
 
 
@@ -46,9 +46,12 @@ class ClothesForm(FlaskForm):
     wind = BooleanField("wind")
     wind_strict = BooleanField("wind_strict")
     slot_choices = [(si, sv) for si, sv in SLOTS.items()]
+    icon_choices = [(n, n) for n in Wearable.get_icon_list()]
     slot = SelectField("slot", choices=slot_choices, coerce=int)
+    icon = SelectField("icon", choices=icon_choices)
     min_temp = IntegerRangeField("min_temp", default=5)
     max_temp = IntegerRangeField("max_temp", default=22)
+
 
     def __init__(self, *args, **kwargs):
         FlaskForm.__init__(self, *args, **kwargs)
